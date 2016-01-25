@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>scroll test</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<style type="text/css" media="screen">
+		* { box-sizing: border-box;}
+		html,body { width:100%; height:100%; margin:0; padding:0;}
+		body { padding:40px; }
+		#container { overflow:hidden; width:100%; height:300px; box-shadow:1px 1px 20px rgba(0,0,0,0.3);}
+		#inner { line-height:4; text-align:center; font-family:Tahoma; position:relative; }
+		.red { background-color:#FF9799; color:white; }
+		.green { background-color:#47BA2C; color:white;}
+		.blue { background-color:#78B1F0; color:white;}
+		.pull-to-container { position:absolute; width:100%; height:50px; line-height:50px; text-align:center;  color:#333; left:0; top:-50px; }
+		.pull-to-container.bottom { top:auto; bottom:-50px; }
+	</style>
+</head>
+<body>
+	<div id="container">
+		<div id="inner">
+			<div class="pull-to-container">pull to refresh</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="red">red red red red</div>
+			<div class="green">green green green</div>
+			<div class="blue">blue blue blue</div>
+			<div class="pull-to-container bottom">drag to load more</div>
+		</div>
+	</div>
+	<script src="nicemove.js"></script>
+	<script type="text/javascript">
+    var a = new NiceMove(document.getElementById("inner"), false, true, { anchor:{top:50,bottom:50} });
+	window.addEventListener('resize', function()
+	{
+		a.resize();
+		a.slideTo(0, 0, 1);
+	});
+	var items = document.querySelectorAll('#inner > div');
+	for(var i=0, d; d=items[i]; i++)
+	{
+		new NiceMove(d, true, false , { anchor:{left:50, right:50} });
+	}
+	</script>
+</body>
+</html>
