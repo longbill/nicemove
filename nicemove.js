@@ -356,12 +356,6 @@ _nicemove.prototype.pause = function()
 
 _nicemove.prototype.listenForMoveAndEnd = function(isRemove)
 {
-	if (isRemove) {
-		if (window.NiceMove.something_is_moving) return;
-		window.NiceMove.something_is_moving = true;
-	} else {
-		window.NiceMove.something_is_moving = false;
-	}
 	var method = isRemove ? "addEventListener" : "removeEventListener";
 	document[method](sys.supports.touch ? "touchmove" : "mousemove", this.moveDel, false);
 	document[method](sys.supports.touch ? "touchend" : "mouseup", this.endDel, false);
@@ -612,8 +606,9 @@ _nicemove.prototype.onTouchStart = function(a)
 	this.listenForMoveAndEnd(true)
 };
 
-_nicemove.prototype.onTouchMove = function(a)
-{
+_nicemove.prototype.onTouchMove = function(a) {
+	if (window.NiceMove.moving_instance && window.NiceMove.moving_instance != this) return;
+
 	if ("mousemove" == a.type)
 	{
 		if (!this.isTouched) return;
@@ -635,19 +630,17 @@ _nicemove.prototype.onTouchMove = function(a)
 		this.gestureChange(math.distance(b, c, h, e) / this.gestureStartDist, Math.atan2(c - e, b - h))
 	}
 	this.touches = a.touches;
-	if (eventHandled)
-	{
+	if (eventHandled) {
 		a.preventDefault();
-		if (this.onFirstMove && typeof this.onFirstMove == 'function')
-		{
+		if (!window.NiceMove.moving_instance) window.NiceMove.moving_instance = this;
+		if (this.onFirstMove && typeof this.onFirstMove == 'function'){
 			this.onFirstMove.call(this.handle);
 			delete this.onFirstMove;
 		}
 	}
 };
 
-_nicemove.prototype.onTouchEnd = function(a)
-{
+_nicemove.prototype.onTouchEnd = function(a) {
 	this.touches = a.touches;
 	if ("mouseup" == a.type)
 		this.isTouched = false, this.dragEnd(a.pageX, a.pageY, a);
@@ -662,6 +655,8 @@ _nicemove.prototype.onTouchEnd = function(a)
 		this.dragStart(a.touches[0].pageX, a.touches[0].pageY, a), this.gestureEnd();
 	else
 		this.onTouchStart(a);
+
+	delete window.NiceMove.moving_instance;
 };
 
 _nicemove.prototype.mouseToTouchEvent = function(a)
