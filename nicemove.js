@@ -310,7 +310,7 @@ function _nicemove(el, scrollHorizontal, scrollVertical, options)
 	this.content = el;
 	this.holder = el.parentNode;
 	if (options) for (var e in options) this[e] = options[e];
-	this.isPagedX && (this.numPages = el.children.length);
+	(this.isPagedX || this.isPagedY) && (this.numPages = el.children.length);
 	this.activate(true);
 	this.resize();
 	sys.is.android && (this.timeThresh = 100)
@@ -332,21 +332,21 @@ _nicemove.prototype.remove = function()
 	this.content = this.holder = this.onPageChanged = null
 };
 
-_nicemove.prototype.slideTo = function(a, b, c, h)
+_nicemove.prototype.slideTo = function(x, y, ms, easing)
 {
-	void 0 == c && (c = 350);
+	void 0 == ms && (ms = 350);
 	utils.resetTransition(this.content);
-	utils.transform2(this.content, -a, -b);
-	utils.transition(this.content, "transform", c + "ms " + (h || ""));
+	utils.transform2(this.content, -x, -y);
+	utils.transition(this.content, "transform", ms + "ms " + (easing || ""));
 	var e = this;
 	setTimeout(function(){ e.pause(); }, 0);
 	clearTimeout(this.slideCompleteTimeout);
 	this.slideCompleteTimeout = setTimeout(function()
 	{
 		utils.resetTransition(e.content)
-	}, c + 1);
-	this.doScrollX && (this.rBandX.contPos = this.contentX = -a);
-	this.doScrollY && (this.rBandY.contPos = this.contentY = -b)
+	}, ms + 1);
+	this.doScrollX && (this.rBandX.contPos = this.contentX = -x);
+	this.doScrollY && (this.rBandY.contPos = this.contentY = -y)
 };
 
 _nicemove.prototype.toPageIndex = function(a, b, c)
