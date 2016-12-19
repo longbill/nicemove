@@ -558,6 +558,7 @@ _nicemove.prototype.dragEnd = function(a, b, c)
 		}
 	}
 	this.play();
+	delete window.NiceMove.moving_instance;
 };
 
 _nicemove.prototype.getTimeStamp = function(a)
@@ -655,8 +656,6 @@ _nicemove.prototype.onTouchEnd = function(a) {
 		this.dragStart(a.touches[0].pageX, a.touches[0].pageY, a), this.gestureEnd();
 	else
 		this.onTouchStart(a);
-
-	delete window.NiceMove.moving_instance;
 };
 
 _nicemove.prototype.mouseToTouchEvent = function(a)
