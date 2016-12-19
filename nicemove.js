@@ -1,17 +1,6 @@
 
 (function() {
 
-
-
-var isTouch = "ontouchstart" in window;
-var Events = 
-{
-	DOWN: isTouch ? "touchstart" : "mousedown",
-	UP: isTouch ? "touchend" : "mouseup",
-	MOVE: isTouch ? "touchmove" : "mousemove"
-};
-
-
 var sys = function()
 {
 	var ua = navigator.userAgent,
@@ -365,11 +354,17 @@ _nicemove.prototype.pause = function()
 	this.isRunning = false
 };
 
-_nicemove.prototype.listenForMoveAndEnd = function(a)
+_nicemove.prototype.listenForMoveAndEnd = function(isRemove)
 {
-	a = a ? "addEventListener" : "removeEventListener";
-	document[a](sys.supports.touch ? "touchmove" : "mousemove", this.moveDel, false);
-	document[a](sys.supports.touch ? "touchend" : "mouseup", this.endDel, false)
+	if (isRemove) {
+		if (window.NiceMove.something_is_moving) return;
+		window.NiceMove.something_is_moving = true;
+	} else {
+		window.NiceMove.something_is_moving = false;
+	}
+	var method = isRemove ? "addEventListener" : "removeEventListener";
+	document[method](sys.supports.touch ? "touchmove" : "mousemove", this.moveDel, false);
+	document[method](sys.supports.touch ? "touchend" : "mouseup", this.endDel, false);
 };
 
 _nicemove.prototype.resize = function(a)
@@ -687,7 +682,6 @@ window.NiceMove = _nicemove;
 
 
 })();
-
 
 
 
