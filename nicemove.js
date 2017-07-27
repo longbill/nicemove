@@ -254,7 +254,8 @@ function _nicemove(el, scrollHorizontal, scrollVertical, options) {
 	this.isGesturing = false;
 	this.dragAngleV = this.dragPrevAngle = this.dragAngle = 0;
 	this.touches = null;
-	this.isActive = this.isTouched = false
+	this.isActive = this.isTouched = false;
+	this.preventDocumentMove = false;
 
 	this.handle = el;
 	if (scrollHorizontal) this.rBandX = new RBand;
@@ -268,7 +269,9 @@ function _nicemove(el, scrollHorizontal, scrollVertical, options) {
 	(this.isPagedX || this.isPagedY) && (this.numPages = el.children.length);
 	this.activate(true);
 	this.resize();
-	sys.is.android && (this.timeThresh = 100)
+	sys.is.android && (this.timeThresh = 100);
+
+	this.initiateDocumentListeners();
 };
 
 _nicemove.prototype.activate = function(a) {
@@ -315,8 +318,18 @@ _nicemove.prototype.pause = function() {
 
 _nicemove.prototype.listenForMoveAndEnd = function(isRemove) {
 	var method = isRemove ? "addEventListener" : "removeEventListener";
-	document[method](sys.supports.touch ? "touchmove" : "mousemove", this.moveDel, false);
-	document[method](sys.supports.touch ? "touchend" : "mouseup", this.endDel, false);
+	document[method](sys.supports.touch ? "touchmove" : "mousemove", this.moveDel, true);
+	document[method](sys.supports.touch ? "touchend" : "mouseup", this.endDel, true);
+};
+
+_nicemove.prototype.initiateDocumentListeners = function() {
+	var self = this;
+	document.addEventListener(sys.supports.touch ? "touchmove" : "mousemove", function(evt) {
+		if (self.preventDocumentMove) evt.preventDefault();
+	}, false);
+	document.addEventListener(sys.supports.touch ? "touchend" : "mouseup", function(evt) {
+		if (self.preventDocumentMove) evt.preventDefault();
+	}, false);
 };
 
 _nicemove.prototype.resize = function(a) {
@@ -528,15 +541,16 @@ _nicemove.prototype.onTouchStart = function(a) {
 
 _nicemove.prototype.onTouchMove = function(a) {
 	if (window.NiceMove.moving_instance && window.NiceMove.moving_instance != this) return;
+
 	if ("mousemove" == a.type) {
 		if (!this.isTouched) return;
 		a = this.mouseToTouchEvent(a)
 	}
+
 	var eventHandled = true;
 	if (1 == a.touches.length) {
 		eventHandled = this.dragChange(a.touches[0].pageX, a.touches[0].pageY, a);
-	}
-	else if (2 <= a.touches.length) {
+	} else if (2 <= a.touches.length) {
 		var b = a.touches[0].pageX,
 			c = a.touches[0].pageY,
 			h = a.touches[1].pageX,
@@ -546,10 +560,8 @@ _nicemove.prototype.onTouchMove = function(a) {
 		this.gestureChange(math.distance(b, c, h, e) / this.gestureStartDist, Math.atan2(c - e, b - h))
 	}
 	this.touches = a.touches;
-
-
 	if (eventHandled) {
-		a.preventDefault();
+		this.preventDocumentMove = true;
 		if (!window.NiceMove.moving_instance) window.NiceMove.moving_instance = this;
 		if (this.onFirstMove && typeof this.onFirstMove == 'function'){
 			this.onFirstMove.call(this.handle);
@@ -572,6 +584,7 @@ _nicemove.prototype.onTouchEnd = function(a) {
 		this.dragStart(a.touches[0].pageX, a.touches[0].pageY, a), this.gestureEnd();
 	else
 		this.onTouchStart(a);
+	this.preventDocumentMove = false;
 };
 
 _nicemove.prototype.mouseToTouchEvent = function(a) {
