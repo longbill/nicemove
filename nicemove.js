@@ -332,7 +332,7 @@
 		}, false);
 	};
 
-	_nicemove.prototype.resize = function(a) {
+	_nicemove.prototype.resize = function(a, silent) {
 		var b = this.contentX / (this.maxX - this.minX),
 			c = this.contentY / (this.maxY - this.minY);
 		if (!a) a = {
@@ -344,6 +344,7 @@
 
 		this.bounds = a;
 		if (this.isPagedX) {
+			this.numPages = this.handle.children.length;
 			this.content.style.width = this.numPages * a.width + "px";
 			for (var h = this.numPages; h--;)
 			this.content.children[h].style.width = a.width + "px"
@@ -355,7 +356,7 @@
 		this.maxY = a.y;
 		this.doScrollX && (this.maxX <= this.minX && (this.minX = this.maxX = 0), this.rBandX.setBounds(this.minX, this.maxX), this.contentX = this.rBandX.contPos = (this.maxX - this.minX) * b, this.rBandX.v = 0);
 		this.doScrollY && (this.maxY <= this.minY && (this.minY = this.maxY = 0), this.rBandY.setBounds(this.minY, this.maxY), this.contentY = this.rBandY.contPos = (this.maxY - this.minY) * c, this.rBandY.v = 0);
-		utils.transform2(this.content, this.contentX, this.contentY)
+		if (!silent) utils.transform2(this.content, this.contentX, this.contentY)
 	};
 
 	_nicemove.prototype.update = function() {
