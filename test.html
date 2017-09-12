@@ -97,18 +97,34 @@
 		<div id="inner3">
 			<div class="red">horizontal pages</div>
 			<div class="green">green green green</div>
-			<div class="blue">blue blue blue</div>
+			<!-- <div class="blue">blue blue blue</div>
 			<div class="red">red red red red</div>
 			<div class="green">green green green</div>
 			<div class="blue">blue blue blue</div>
-			<div class="red">red red red red</div>
+			<div class="red">red red red red</div> -->
 		</div>
 	</div>
+	<button onclick="addPage()">add</button>
 	<script src="nicemove.js"></script>
 	<script type="text/javascript">
     var a = new NiceMove(document.getElementById("inner1"), false, true, { anchor:{top:50,bottom:50} });
     var b = new NiceMove(document.getElementById("inner2"), false, true, { isPagedY: true });
-    var c = new NiceMove(document.getElementById("inner3"), true, false, { isPagedX: true });
+    var c = new NiceMove(document.getElementById("inner3"), true, false, { 
+    	isPagedX: true,
+    	onPageChanged: function(a) {
+    		if (a.index + 1 === document.getElementById("inner3").children.length) {
+    			addPage();
+    		}
+    	}
+    });
+
+    function addPage() {
+    	var el = document.createElement('div');
+    	el.innerHTML = 'new new new ';
+    	el.className = 'blue';
+    	document.getElementById("inner3").appendChild(el);
+    	c.resize(null, true);
+    }
 
 	window.addEventListener('resize', function()
 	{

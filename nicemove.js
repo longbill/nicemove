@@ -354,8 +354,19 @@
 		this.isPagedX && (this.minX = a.width - this.numPages * this.bounds.width);
 		this.maxX = a.x;
 		this.maxY = a.y;
-		this.doScrollX && (this.maxX <= this.minX && (this.minX = this.maxX = 0), this.rBandX.setBounds(this.minX, this.maxX), this.contentX = this.rBandX.contPos = (this.maxX - this.minX) * b, this.rBandX.v = 0);
-		this.doScrollY && (this.maxY <= this.minY && (this.minY = this.maxY = 0), this.rBandY.setBounds(this.minY, this.maxY), this.contentY = this.rBandY.contPos = (this.maxY - this.minY) * c, this.rBandY.v = 0);
+	
+		if (this.doScrollX) {
+			if (this.maxX <= this.minX) this.minX = this.maxX = 0;
+			this.rBandX.setBounds(this.minX, this.maxX);
+			if (!silent) this.contentX = this.rBandX.contPos = (this.maxX - this.minX) * b;
+			this.rBandX.v = 0;
+		}
+		if (this.doScrollY) {
+			if (this.maxY <= this.minY) this.minY = this.maxY = 0;
+			this.rBandY.setBounds(this.minY, this.maxY);
+			if (!silent) this.contentY = this.rBandY.contPos = (this.maxY - this.minY) * c;
+			this.rBandY.v = 0;
+		}
 		if (!silent) utils.transform2(this.content, this.contentX, this.contentY)
 	};
 
