@@ -268,7 +268,8 @@
 		if (options) for (var e in options) this[e] = options[e];
 		(this.isPagedX || this.isPagedY) && (this.numPages = el.children.length);
 		this.activate(true);
-		this.resize();
+		this.
+		();
 		sys.is.android && (this.timeThresh = 100);
 
 		this.initiateDocumentListeners();
@@ -335,6 +336,8 @@
 	_nicemove.prototype.resize = function(a, silent) {
 		var b = this.contentX / (this.maxX - this.minX),
 			c = this.contentY / (this.maxY - this.minY);
+		if (isNaN(b)) b = 0;
+		if (isNaN(c)) c = 0;
 		if (!a) a = {
 			x: 0,
 			y: 0,
