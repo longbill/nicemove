@@ -268,8 +268,7 @@
 		if (options) for (var e in options) this[e] = options[e];
 		(this.isPagedX || this.isPagedY) && (this.numPages = el.children.length);
 		this.activate(true);
-		this.
-		();
+		this.resize();
 		sys.is.android && (this.timeThresh = 100);
 
 		this.initiateDocumentListeners();
