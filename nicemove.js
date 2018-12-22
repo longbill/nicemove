@@ -326,10 +326,14 @@
 		var self = this;
 		document.addEventListener(sys.supports.touch ? "touchmove" : "mousemove", function(evt) {
 			if (self.preventDocumentMove) evt.preventDefault();
-		}, false);
+		}, {
+			passive: false
+		});
 		document.addEventListener(sys.supports.touch ? "touchend" : "mouseup", function(evt) {
 			if (self.preventDocumentMove) evt.preventDefault();
-		}, false);
+		}, {
+			passive: false
+		});
 	};
 
 	_nicemove.prototype.resize = function(a, silent) {
@@ -534,18 +538,19 @@
 		this.isGesturing = false;
 	};
 
-	_nicemove.prototype.onTouchStart = function(a) {
+	_nicemove.prototype.onTouchStart = function(evt) {
 		this.isTouched = true;
-		if ("mousedown" == a.type) a = this.mouseToTouchEvent(a);
-		if (1 == a.touches.length)
-			this.dragStart(a.touches[0].pageX, a.touches[0].pageY, a);
-		else if (2 <= a.touches.length) {
-			var b = a.touches[0].pageX,
-				c = a.touches[0].pageY,
-				h = a.touches[1].pageX,
-				e = a.touches[1].pageY,
+		if ("mousedown" == evt.type) evt = this.mouseToTouchEvent(evt);
+		if (1 == evt.touches.length) {
+			this.dragStart(evt.touches[0].pageX, evt.touches[0].pageY, evt);
+			// evt.stopPropagation();
+		} else if (2 <= evt.touches.length) {
+			var b = evt.touches[0].pageX,
+				c = evt.touches[0].pageY,
+				h = evt.touches[1].pageX,
+				e = evt.touches[1].pageY,
 				d = math.addPointOnLine(b, c, h, e, 0.5);
-			this.dragStart(d.x, d.y, a);
+			this.dragStart(d.x, d.y, evt);
 			this.gestureStartDist = math.distance(b, c, h, e);
 			this.gestureStart(1, Math.atan2(c - e, b - h))
 		}
@@ -574,6 +579,7 @@
 			this.gestureChange(math.distance(b, c, h, e) / this.gestureStartDist, Math.atan2(c - e, b - h))
 		}
 		this.touches = a.touches;
+
 		if (eventHandled) {
 			this.preventDocumentMove = true;
 			if (!window.NiceMove.moving_instance) window.NiceMove.moving_instance = this;
